@@ -1,6 +1,6 @@
 # Zomato_application
 
-![Uploading app_image.PNG…]()
+![app_image](https://user-images.githubusercontent.com/27666222/119695786-2ca9c100-be6c-11eb-924d-d21209590213.PNG)
 
 
 # 1. BusinessProblems
