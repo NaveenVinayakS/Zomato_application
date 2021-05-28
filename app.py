@@ -5,6 +5,25 @@ import key_dict
 import pandas as pd
 
 
+from cassandra.cluster import Cluster
+
+cluster = Cluster()
+session = cluster.connect()
+run = session.execute("use test_snv")
+run = session.execute("select * from zomato_data;")
+
+l=[]
+for i in run:
+
+    l.append(i)
+
+if len(l)>0:
+    pass
+else:
+    run = session.execute("CREATE TABLE  zomato_data (votes int, cost int PRIMARY KEY,online_order Decimal, book_table Decimal, rest_type Decimal, location Decimal, cuisines Decimal, dish_liked Decimal, prediction Decimal);")
+
+
+
 app = Flask(__name__)
 model = pickle.load(open('model.pkl', 'rb'))
 
@@ -98,7 +117,24 @@ def predict():
     prediction = model.predict(final_features)
 
     output = round(prediction[0], 1)
+    print(output)
+    ##############
+    database_input = []
+    for i in final_features:
+        print(i)
+        for lis in i:
+            print(lis)
+            database_input.append(lis)
+    print("database_input :-",database_input)
+    print(type(database_input))
+    database_input = [float(item) for item in database_input]
+    string = "INSERT INTO zomato_data (votes, cost ,online_order, book_table, rest_type , location , cuisines , dish_liked ) VALUES ({})".format(database_input)
+    string = string.replace('[', '')
+    string = string.replace(']', '')
+    print(string)
+    run = session.execute(string)
 
+    ##########################
     return render_template('index.html', prediction_text='Your Rating is: {}'.format(output))
 
 if __name__ == "__main__":
